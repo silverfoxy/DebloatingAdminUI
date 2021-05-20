@@ -14,9 +14,8 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\PrettyPrinter;
 
-class software_file extends CI_Controller{
-    private array $whitelist;
-
+class software_file extends CI_Controller
+{
     function __construct()
     {
         parent::__construct();
@@ -24,27 +23,47 @@ class software_file extends CI_Controller{
         $this->load->model('Software_file_model');
         $this->load->model('Software_version_model');
 
-        $this->whitelist = [];
+        $this->whitelist = ['phpMyAdmin-4.4.15.6-all-languages/libraries/core.lib.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/sanitizing.lib.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/dbi/DBIMysql.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/Error_Handler.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/Util.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/DisplayResults.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/select_lang.lib.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/Error.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/plugins/auth/AuthenticationCookie.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/Theme_Manager.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/DatabaseInterface.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/dbi/DBIMysqli.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/navigation/NavigationHeader.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/navigation/NodeFactory.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/navigation/Nodes/Node.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/navigation/NavigationTree.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/RecentFavoriteTable.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/navigation/Nodes/Node_Database.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/navigation/Navigation.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/user_preferences.lib.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/Table.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/Menu.class.php',
+            'phpMyAdmin-4.4.15.6-all-languages/libraries/Message.class.php'];
     }
 
     /*
      * Listing of software_files filtered by fk_software_version_id
      */
-    function index($id=null)
+    function index($id = null)
     {
-        if($id==null) {
+        if ($id == null) {
             $data['software_files'] = $this->Software_file_model->get_all_software_files();
             $data['software'] = null;
             $data['software_version'] = null;
-        }
-        else
-        {
+        } else {
             $data['software_files'] = $this->Software_file_model->get_all_software_files($id);
             $data['software'] = null;
             $data['software_version'] = null;
         }
         $data['_view'] = 'software_file/index';
-        $this->load->view('layouts/main',$data);
+        $this->load->view('layouts/main', $data);
     }
 
     /*
@@ -52,32 +71,29 @@ class software_file extends CI_Controller{
      */
     function add()
     {
-        if(isset($_POST) && count($_POST) > 0)
-        {
+        if (isset($_POST) && count($_POST) > 0) {
             $directory_index = $this->input->post('webapp_directory');
             $params = array(
-      				'fk_software_version_id' => $this->input->post('software_version'),
-              'description' => $this->input->post('description'),
+                'fk_software_version_id' => $this->input->post('software_version'),
+                'description' => $this->input->post('description'),
             );
             $files = $this->getDirs('/var/www/html/');
             $dirname = $files[$directory_index];
             $files = $this->getDirContents($dirname);
             $software_file_id = $this->Software_file_model->add_software_file($params, $files);
             redirect('software_file/description');
-        }
-        else
-        {
+        } else {
             $webapps = $this->getDirs('/var/www/html/');
             $data['webapps'] = $webapps;
 
-      			$this->load->model('Software_model');
-      			$data['all_software'] = $this->Software_model->get_all_software();
+            $this->load->model('Software_model');
+            $data['all_software'] = $this->Software_model->get_all_software();
 
             $this->load->model('Software_version_model');
-      			$data['all_software_versions'] = $this->Software_version_model->get_all_software_version();
+            $data['all_software_versions'] = $this->Software_version_model->get_all_software_version();
 
             $data['_view'] = 'software_file/add';
-            $this->load->view('layouts/main',$data);
+            $this->load->view('layouts/main', $data);
         }
     }
 
@@ -89,29 +105,40 @@ class software_file extends CI_Controller{
         // check if the software_file exists before trying to edit it
         $data['software_file'] = $this->Software_file_model->get_software_file($id);
 
-        if(isset($data['software_file']['id']))
-        {
-            if(isset($_POST) && count($_POST) > 0)
-            {
+        if (isset($data['software_file']['id'])) {
+            if (isset($_POST) && count($_POST) > 0) {
                 $params = array(
-        					'fk_test_id' => $this->input->post('fk_test_id'),
-        					'file_name' => $this->input->post('file_name'),
+                    'fk_test_id' => $this->input->post('fk_test_id'),
+                    'file_name' => $this->input->post('file_name'),
                 );
 
-                $this->Software_file_model->update_software_file($id,$params);
+                $this->Software_file_model->update_software_file($id, $params);
                 redirect('software_file/index');
-            }
-            else
-            {
-        				$this->load->model('Test_model');
-        				$data['all_tests'] = $this->Test_model->get_all_tests();
+            } else {
+                $this->load->model('Test_model');
+                $data['all_tests'] = $this->Test_model->get_all_tests();
 
                 $data['_view'] = 'software_file/edit';
-                $this->load->view('layouts/main',$data);
+                $this->load->view('layouts/main', $data);
             }
-        }
-        else
+        } else
             show_error('The software_file you are trying to edit does not exist.');
+    }
+
+    function multiselect_debloat($id = null)
+    {
+        $this->load->model('Test_model');
+        if ($id == null) {
+            // return test groups
+            $data['tests'] = $this->Test_model->get_all_test_groups();
+            $data['_view'] = 'software_file/multiselect_debloat';
+        } else {
+            // return all tests within a category
+            $software_version_id = $this->Software_file_model->get_sofware_version_id_by_description($id);
+            $data['tests'] = $this->Test_model->get_tests_by_group_software_version_id($software_version_id);
+            $data['_view'] = 'software_file/multiselect_debloat';
+        }
+        $this->load->view('layouts/main', $data);
     }
 
     /*
@@ -122,26 +149,25 @@ class software_file extends CI_Controller{
         $software_file = $this->Software_file_model->get_software_file($id);
 
         // check if the software_file exists before trying to delete it
-        if(isset($software_file['id']))
-        {
+        if (isset($software_file['id'])) {
             $this->Software_file_model->delete_software_file($id);
             redirect('software_file/index');
-        }
-        else
+        } else
             show_error('The software_file you are trying to delete does not exist.');
     }
 
     /*
     * Helper functions to get local www directories
     */
-    function getDirContents($dir, &$results = array()){
+    function getDirContents($dir, &$results = array())
+    {
         $files = scandir($dir);
 
-        foreach($files as $key => $value){
-            $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
-            if(!is_dir($path)) {
+        foreach ($files as $key => $value) {
+            $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+            if (!is_dir($path)) {
                 $results[] = $path;
-            } else if($value != "." && $value != "..") {
+            } else if ($value != "." && $value != "..") {
                 $this->getDirContents($path, $results);
                 //$results[] = $path;
             }
@@ -149,12 +175,14 @@ class software_file extends CI_Controller{
 
         return $results;
     }
-    function getDirs($dir, &$results = array()){
+
+    function getDirs($dir, &$results = array())
+    {
         $files = scandir($dir);
 
-        foreach($files as $key => $value){
-            $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
-            if(is_dir($path) && $value != "." && $value != "..") {
+        foreach ($files as $key => $value) {
+            $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
+            if (is_dir($path) && $value != "." && $value != "..") {
                 $results[] = $path;
             }
         }
@@ -169,10 +197,11 @@ class software_file extends CI_Controller{
     {
         $data['software_files_description'] = $this->Software_file_model->get_all_software_files_descriptions();
         $data['_view'] = 'software_file/description';
-        $this->load->view('layouts/main',$data);
+        $this->load->view('layouts/main', $data);
     }
 
-    function is_whitelisted($filename) {
+    function is_whitelisted($filename)
+    {
         foreach ($this->whitelist as $whitelist) {
             if (strpos($filename, $whitelist) !== false) {
                 return true;
@@ -182,29 +211,54 @@ class software_file extends CI_Controller{
     }
 
     /*
+     * Used to parse multiple parameters passed in url separated by / and return an array
+     */
+    function _get_test_groups_from_url()
+    {
+        $segments = $this->uri->total_segments();
+        $test_groups = array();
+        for ($i=3; $i <= $segments; $i++) {
+            array_push($test_groups, $this->uri->segment($i));
+        }
+        return $test_groups;
+    }
+
+    /*
      * Debloating files in software_files for selected description
      */
     function debloat_files($id)
     {
         $software_files = $this->Software_file_model->get_all_software_files_descriptions_to_be_removed($id);
-        echo 'Removing '.sizeof($software_files).' Files<br />';
+        $this->_debloat_files($software_files);
+    }
+
+    function _debloat_files($software_files) {
+        echo 'Removing ' . sizeof($software_files) . ' Files<br />';
         foreach ($software_files as $software_file) {
             $file_name = $software_file['file_name'];
             $is_whitelisted = $this->is_whitelisted($file_name);
             if (isset(pathinfo($file_name)['extension']) && pathinfo($file_name)['extension'] == 'php' && !$is_whitelisted) {
-              //Backup the file
-              echo $file_name."<br />";
-              //copy($file_name, $file_name.'.xsrbackup');
-              //$file2 = file_get_contents($path2);
-              //if ($file1 !== $file2)
-              //    file_put_contents($path2, $file1);
-              $handle = fopen($file_name, 'w') or die('Cannot open file:  '.$file_name);
-              $data = "<html><head>    <meta charset=\"utf-8\">    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no\">    <title>Error: Target File Has Been Removed</title>    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\" integrity=\"sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\" crossorigin=\"anonymous\">    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css\" integrity=\"sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp\" crossorigin=\"anonymous\">    <style>        * {            font-family: tahoma;        }        div.container .panel {            position: relative !important;        }        div.container {            width: 50% !important;            height: 50% !important;            overflow: auto !important;            margin: auto !important;            position: absolute !important;            top: 0 !important;            left: 0 !important;            bottom: 0 !important;            right: 0 !important;        }    </style></head><body>    <div class=\"container\">        <div class=\"panel panel-danger center\">            <div class=\"panel-heading\" style=\"text-align: left;\"> Error </div>            <div class=\"panel-body\">                <p class=\"text-center\">                  <?php echo 'This file has been removed (\"'.__FILE__.'\")'; error_log('Removed file called ('.__FILE__.')'); ?>                </p>            </div>        </div>    </div></body></html><?php die(); ?>";
-              fwrite($handle, $data);
-              fclose($handle);
+                //Backup the file
+                echo $file_name . "<br />";
+                //copy($file_name, $file_name.'.xsrbackup');
+                //$file2 = file_get_contents($path2);
+                //if ($file1 !== $file2)
+                //    file_put_contents($path2, $file1);
+                $handle = fopen($file_name, 'w') or die('Cannot open file:  ' . $file_name);
+                $data = "<html><head>    <meta charset=\"utf-8\">    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no\">    <title>Error: Target File Has Been Removed</title>    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\" integrity=\"sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\" crossorigin=\"anonymous\">    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css\" integrity=\"sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp\" crossorigin=\"anonymous\">    <style>        * {            font-family: tahoma;        }        div.container .panel {            position: relative !important;        }        div.container {            width: 50% !important;            height: 50% !important;            overflow: auto !important;            margin: auto !important;            position: absolute !important;            top: 0 !important;            left: 0 !important;            bottom: 0 !important;            right: 0 !important;        }    </style></head><body>    <div class=\"container\">        <div class=\"panel panel-danger center\">            <div class=\"panel-heading\" style=\"text-align: left;\"> Error </div>            <div class=\"panel-body\">                <p class=\"text-center\">                  <?php echo 'This file has been removed (\"'.__FILE__.'\")'; error_log('Removed file called ('.__FILE__.')'); ?>                </p>            </div>        </div>    </div></body></html><?php die(); ?>";
+                fwrite($handle, $data);
+                fclose($handle);
             }
         }
         echo 'Done';
+    }
+
+    function multiselect_debloat_files($id)
+    {
+        $test_groups = $this->_get_test_groups_from_url();
+        $software_version = array_shift($test_groups);
+        $software_files = $this->Software_file_model->get_all_software_files_to_be_removed_by_testgroups($software_version, $test_groups);
+        $this->_debloat_files($software_files);
     }
 
     /*
@@ -248,6 +302,47 @@ class software_file extends CI_Controller{
         }
         echo 'Done<br />';
         $this->debloat_files($fk_software_files_description);
+    }
+
+    function multiselect_debloat_functions($id) {
+        $test_groups = $this->_get_test_groups_from_url();
+        $fk_software_files_description = array_shift($test_groups);
+        $this->load->model('Covered_line_model');
+        $this->load->model('Software_function_model');
+        $files = $this->Software_file_model->get_all_software_file_names($fk_software_files_description);
+        foreach ($files as $file) {
+            $file_name = $file['file_name'];
+            $is_whitelisted = $this->is_whitelisted($file_name);
+            if (isset(pathinfo($file_name)['extension']) && pathinfo($file_name)['extension'] == 'php' && !$is_whitelisted) {
+                $covered_lines = $this->Covered_line_model->get_covered_lines_by_filename_and_testgroups($file_name, $test_groups);
+                $covered_lines = array_map('intval', array_column($covered_lines, 'line_number'));
+                $code = file_get_contents($file_name);
+                $traverser = new NodeTraverser;
+                echo '<hr />' . $file_name . ':<br />';
+                $traverser->addVisitor(new DebloatFunctionVisitor($file_name, $file['id'], $covered_lines, $this->Software_function_model));
+                $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP5);
+                try {
+                    $ast = $parser->parse($code);
+                } catch (Error $error) {
+                    echo "Parse error at ({$file_name}): {$error->getMessage()}\n";
+                    //Continue debloating rest of the files and skip the file with parsing errors
+                    continue;
+                    //return;
+                }
+                $debloated_ast = $traverser->traverse($ast);
+                $prettyPrinter = new PrettyPrinter\Standard();
+                $debloated_code = $prettyPrinter->prettyPrintFile($debloated_ast);
+                try {
+                    $handle = fopen($file_name, 'w');
+                    fwrite($handle, $debloated_code);
+                    fclose($handle);
+                } catch (Exception $e) {
+                    echo 'File doesnt exist<br />';
+                }
+            }
+        }
+        echo 'Done<br />';
+        // $this->debloat_files($fk_software_files_description);
     }
 
     /*
@@ -369,7 +464,7 @@ class RewriteDestructorsVisitor extends NodeVisitorAbstract {
 
     public function enterNode(Node $node) {
         if (($node instanceof Node\Stmt\Function_ || $node instanceof Node\Stmt\ClassMethod)
-            && is_array($node->stmts) && sizeof($node->stmts) > 0) { // If function has some executable lines And ...
+            && sizeof($node->stmts) > 0) { // If function has some executable lines And ...
             // Create function signature e.g., func(a, b, c)
             $params_csv = '';
             if (strtolower($node->name) == '__destruct') {

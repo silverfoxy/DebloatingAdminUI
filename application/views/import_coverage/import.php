@@ -4,7 +4,7 @@
             <div class="box-header with-border">
               	<h3 class="box-title">Import Coverage Information</h3>
             </div>
-            <?php echo form_open_multipart('import_coverage/import', array('id' => 'import_form')); ?>
+            <?php echo form_open_multipart('import_coverage/import'); ?>
           	<div class="box-body">
 			  	<div class="col-md-4">
 					<label for="fk_version_id" class="control-label">Software Version</label>
@@ -39,24 +39,15 @@
 						<input type="text" name="test_name" value="<?php echo $this->input->post('test_name'); ?>" class="form-control" id="test_name" placeholder="Magento_import" />
 					</div>
 				</div>
-                <div class="col-md-4">
-                    <label for="file_type" class="control-label">File Type</label>
-                    <div class="form-group">
-                        <select name="file_type" id="file_type" class="form-control" required>
-                            <option value="line_coverage">Line coverage</option>
-                            <option value="function_coverage">Function coverage</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <label for="filename" class="control-label">File</label>
-                    <div class="form-group">
-                        <input type="file" name="file" accept=".txt" required />
-                    </div>
-			    </div>
+				<div class="col-md-8">
+					<label for="filename" class="control-label">File</label>
+					<div class="form-group">
+						<input type="file" name="file" accept=".txt" required />
+				</div>
+			</div>
 			<div class="col-md-12">
 			<div class="box-footer">
-            	<button type="submit" id="import_file" class="btn btn-success">
+            	<button type="submit" class="btn btn-success">
             		<i class="fa fa-check"></i> Submit
             	</button>
           	</div>
@@ -65,15 +56,3 @@
       	</div>
     </div>
 </div>
-<script>
-    $(document).ready(function() {
-        $("#import_form").submit(function() {
-            // disable button
-            $('#import_file').prop("disabled", true);
-            // add spinner to button
-            $('#import_file').html(
-                `<span class="spinner-border" role="status" aria-hidden="true"></span> Loading...`
-            );
-        });
-    });
-</script>

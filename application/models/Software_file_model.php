@@ -72,6 +72,25 @@ class Software_file_model extends CI_Model
     }
 
     /*
+     * Get all software_file filtered by test groups (Not using the removed column anymore)
+     */
+    function get_all_software_files_to_be_removed_by_testgroups($software_file_description, $test_groups)
+    {
+        $subquery = $this->db->select('file_name')->from('covered_files')->join('tests', 'tests.id = covered_files.fk_test_id');
+        if (sizeof($test_groups) > 0) {
+            $first_group = array_pop($test_groups);
+            $subquery->where('test_group', $first_group);
+        }
+        while (sizeof($test_groups) > 0) {
+            $next_group = array_pop($test_groups);
+            $subquery->or_where('test_group', $next_group);
+        }
+        $subquery = $subquery->get_compiled_select();
+        $query = $this->db->select('file_name')->from('software_files')->where('fk_software_files_description', $software_file_description)->where_not_in('file_name', $subquery, false);
+        return $query->get()->result_array();
+    }
+
+    /*
      * function to add new software_file
      */
     function add_software_file($params, $files)
@@ -110,11 +129,15 @@ class Software_file_model extends CI_Model
      */
     function get_all_software_files_descriptions()
     {
-        $this->db->select('software_files_description.id, software.name, software_version.version, description')
+        $this->db->select('software_files_description.id, software.name, software_version.version, description, fk_software_version_id')
          ->from('software_files_description')
          ->join('software_version', 'software_files_description.fk_software_version_id = software_version.id')
          ->join('software', 'software_version.fk_software_id = software.id')
          ->order_by('id', 'desc');
         return $this->db->get()->result_array();
+    }
+
+    function get_sofware_version_id_by_description($software_file_description_id) {
+        return $this->db->select('fk_software_version_id')->from('software_files_description')->where('id', $software_file_description_id)->get()->row()->fk_software_version_id;
     }
 }

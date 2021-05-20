@@ -18,13 +18,14 @@
                     </tr>
                     <?php foreach($software_files_description as $c){ ?>
                     <tr>
-            						<td><a href="<?php echo site_url('software_file/index/'.$c['id']); ?>"><?php echo $c['id']; ?></a></td>
-            						<td><a href="<?php echo site_url('software_file/index/'.$c['id']); ?>"><?php echo $c['name']; ?></a></td>
+                        <td><a href="<?php echo site_url('software_file/index/'.$c['id']); ?>"><?php echo $c['id']; ?></a></td>
+                        <td><a href="<?php echo site_url('software_file/index/'.$c['id']); ?>"><?php echo $c['name']; ?></a></td>
                         <td><a href="<?php echo site_url('software_file/index/'.$c['id']); ?>"><?php echo $c['version']; ?></a></td>
                         <td><a href="<?php echo site_url('software_file/index/'.$c['id']); ?>"><?php echo $c['description']; ?></a></td>
-            						<td>
+                        <td>
                             <a href="<?php echo site_url('software_file/debloat_files/'.$c['id']); ?>" class="btn btn-danger btn-xs"><span class="fa fa-trash"></span> Debloat Files</a>
                             <a href="<?php echo site_url('software_file/debloat_functions/'.$c['id']); ?>" class="btn btn-danger btn-xs"><span class="fa fa-trash"></span> Debloat Functions</a>
+                            <a href="<?php echo site_url('software_file/multiselect_debloat/'.$c['id']); ?>" class="btn btn-info btn-xs"><span class="fa fa-check-square-o"></span> Select tests</a>
                             &nbsp;
                             <a href="<?php echo site_url('software_file/rewrite_destructors/'.$c['id']); ?>" class="btn btn-info btn-xs"><span class="fa fa-refresh"></span> Rewrite Destructors</a>
                         </td>

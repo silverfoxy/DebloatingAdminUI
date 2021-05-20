@@ -14,18 +14,18 @@ class Report extends CI_Controller{
      */
     function index($id=null)
     {
-      $this->load->model('Test_model');
-      if($id==null) {
-        // return test groups
-        $data['tests'] = $this->Test_model->get_all_test_groups();
-        $data['_view'] = 'report/groups';
-      }
-      else {
-        // return all tests within a category
-        $data['tests'] = $this->Test_model->get_all_tests_by_group($id);
-        $data['_view'] = 'report/index';
-      }
-      $this->load->view('layouts/main',$data);
+        $this->load->model('Test_model');
+        if($id==null) {
+            // return test groups
+            $data['tests'] = $this->Test_model->get_all_test_groups();
+            $data['_view'] = 'report/groups';
+        }
+        else {
+            // return all tests within a category
+            $data['tests'] = $this->Test_model->get_all_tests_by_group($id);
+            $data['_view'] = 'report/index';
+        }
+        $this->load->view('layouts/main',$data);
     }
 
     /*

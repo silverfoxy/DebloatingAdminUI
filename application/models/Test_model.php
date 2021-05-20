@@ -48,11 +48,22 @@ class Test_model extends CI_Model
     function get_all_tests_by_group($id)
     {
         $this->db->select('tests.id, tests.test_name, tests.test_group, tests.test_date, software.name, software_version.version')
-         ->from('tests')
-         ->join('software', 'tests.fk_software_id = software.id')
-         ->join('software_version', 'tests.fk_software_version_id = software_version.id')
-         ->where('INSTR(tests.test_group, "'.$id.'") > 0')
-         ->order_by('id', 'desc');
+            ->from('tests')
+            ->join('software', 'tests.fk_software_id = software.id')
+            ->join('software_version', 'tests.fk_software_version_id = software_version.id')
+            ->where('INSTR(tests.test_group, "'.$id.'") > 0')
+            ->order_by('id', 'desc');
+        return $this->db->get()->result_array();
+    }
+
+    function get_tests_by_group_software_version_id($id)
+    {
+        $this->db->select('tests.id, tests.test_name, tests.test_group, tests.test_date, software.name, software_version.version')
+            ->from('tests')
+            ->join('software', 'tests.fk_software_id = software.id')
+            ->join('software_version', 'tests.fk_software_version_id = software_version.id')
+            ->where('fk_software_version_id', $id)
+            ->order_by('id', 'desc');
         return $this->db->get()->result_array();
     }
 
@@ -63,8 +74,7 @@ class Test_model extends CI_Model
     {
       $this->db->distinct();
       $this->db->select('test_group')
-       ->from('tests')
-       ->where('LENGTH(test_group) > 0');
+       ->from('tests');
       return $this->db->get()->result_array();
     }
 

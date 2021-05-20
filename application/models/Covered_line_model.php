@@ -26,13 +26,29 @@ class Covered_line_model extends CI_Model
     {
         $this->db->distinct();
         $this->db->select('covered_lines.line_number')
-         ->from('tests')
-         ->where_in('tests.test_group', $test_group)
-         ->join('covered_files', 'covered_files.fk_test_id = tests.id')
-         ->where('covered_files.file_name', $file_name)
-         ->join('covered_lines', 'covered_lines.fk_file_id = covered_files.id');
+            ->from('tests')
+            ->where_in('tests.test_group', $test_group)
+            ->join('covered_files', 'covered_files.fk_test_id = tests.id')
+            ->where('covered_files.file_name', $file_name)
+            ->join('covered_lines', 'covered_lines.fk_file_id = covered_files.id');
         $result = $this->db->get()->result_array();
         //print_r($this->db->last_query());
+        return $result;
+    }
+
+    /*
+     * Get covered_line filtered by file_name and a list of test_group
+     */
+    function get_covered_lines_by_filename_and_testgroups($file_name, $test_groups)
+    {
+        $this->db->distinct();
+        $this->db->select('covered_lines.line_number')
+            ->from('tests')
+            ->where_in('tests.test_group', $test_groups)
+            ->join('covered_files', 'covered_files.fk_test_id = tests.id')
+            ->where('covered_files.file_name', $file_name)
+            ->join('covered_lines', 'covered_lines.fk_file_id = covered_files.id');
+        $result = $this->db->get()->result_array();
         return $result;
     }
 
@@ -80,15 +96,6 @@ class Covered_line_model extends CI_Model
     {
         $this->db->insert('covered_lines',$params);
         return $this->db->insert_id();
-    }
-
-    /*
-    * function to add covered_lines in batch
-    */
-    function add_batch_covered_lines($params)
-    {
-        $this->db->insert_batch('covered_lines',$params);
-        return true;
     }
 
     /*
